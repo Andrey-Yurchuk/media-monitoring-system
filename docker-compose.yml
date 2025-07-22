@@ -35,8 +35,11 @@ services:
     ports:
       - "${DB_EXTERNAL_PORT}:${DB_PORT}"
     volumes:
-      - ./docker/data/postgres:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
 
 networks:
   default:
     driver: bridge
+
+volumes:
+  postgres_data:
