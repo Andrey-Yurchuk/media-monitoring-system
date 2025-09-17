@@ -13,7 +13,8 @@ return function (Router $router, NewsController $newsController, ReportControlle
         echo json_encode([
             'status' => 'healthy',
             'timestamp' => date('Y-m-d H:i:s'),
-            'version' => '1.0.0'
+            'version' => '1.0.1',
+            'deployment' => 'GitHub Actions'
         ], JSON_THROW_ON_ERROR);
     });
     
