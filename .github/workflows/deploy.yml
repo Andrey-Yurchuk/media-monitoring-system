@@ -21,7 +21,7 @@ jobs:
         run: |
           echo "Stopping old containers..."
           cd /home/$USER/production-media-monitoring
-          docker-compose down || true
+          docker-compose -f docker-compose.prod.yml down || true
           
       - name: Copy new code to production
         run: |
