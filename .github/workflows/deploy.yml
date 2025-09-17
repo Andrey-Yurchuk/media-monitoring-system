@@ -33,7 +33,7 @@ jobs:
         run: |
           echo "Setting up production environment file..."
           cd /var/www/html/production-media-monitoring
-          cp .env .env.production 2>/dev/null || cp env.example .env.production 2>/dev/null || echo "No .env or env.example found"
+          cp .env .env.production 2>/dev/null || cp .env.example .env.production 2>/dev/null || echo "No .env or .env.example found"
           
       - name: Build and start containers
         run: |

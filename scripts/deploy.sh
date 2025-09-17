@@ -56,11 +56,11 @@ if [ ! -f ".env.production" ]; then
     if [ -f ".env" ]; then
         cp .env .env.production
         echo "Создан .env.production из .env"
-    elif [ -f "env.example" ]; then
-        cp env.example .env.production
-        echo "Создан .env.production из env.example"
+    elif [ -f ".env.example" ]; then
+        cp .env.example .env.production
+        echo "Создан .env.production из .env.example"
     else
-        echo "Не найден .env или env.example, создайте .env.production вручную"
+        echo "Не найден .env или .env.example, создайте .env.production вручную"
     fi
 fi
 
