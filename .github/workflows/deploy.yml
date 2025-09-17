@@ -26,9 +26,8 @@ jobs:
       - name: Copy new code to production
         run: |
           echo "Copying new code to production directory..."
-          sudo mkdir -p /home/$USER/production-media-monitoring
-          sudo cp -r $GITHUB_WORKSPACE/* /home/$USER/production-media-monitoring/
-          sudo chown -R $USER:$USER /home/$USER/production-media-monitoring
+          mkdir -p /home/$USER/production-media-monitoring
+          cp -r $GITHUB_WORKSPACE/* /home/$USER/production-media-monitoring/
           
       - name: Setup production environment
         run: |
