@@ -16,7 +16,7 @@ if [ "$EUID" -eq 0 ]; then
 fi
 
 # Создаем папку для runner
-RUNNER_DIR="$HOME/actions-runner"
+RUNNER_DIR="/var/www/html/actions-runner"
 echo "Создаем папку для runner: $RUNNER_DIR"
 
 if [ -d "$RUNNER_DIR" ]; then

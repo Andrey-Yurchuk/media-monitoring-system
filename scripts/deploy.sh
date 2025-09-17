@@ -10,8 +10,8 @@ echo "======================================="
 
 # Переменные
 PROJECT_DIR="/var/www/html/media-monitoring-system"
-PRODUCTION_DIR="$HOME/production-media-monitoring"
-BACKUP_DIR="$HOME/backup-media-monitoring-$(date +%Y%m%d_%H%M%S)"
+PRODUCTION_DIR="/var/www/html/production-media-monitoring"
+BACKUP_DIR="/var/www/html/backup-media-monitoring-$(date +%Y%m%d_%H%M%S)"
 
 echo "Проект: $PROJECT_DIR"
 echo "Продакшн: $PRODUCTION_DIR"
@@ -53,11 +53,14 @@ cd "$PRODUCTION_DIR"
 
 # Создаем .env.production если его нет
 if [ ! -f ".env.production" ]; then
-    if [ -f "env.example" ]; then
+    if [ -f ".env" ]; then
+        cp .env .env.production
+        echo "Создан .env.production из .env"
+    elif [ -f "env.example" ]; then
         cp env.example .env.production
         echo "Создан .env.production из env.example"
     else
-        echo "⚠️  Не найден env.example, создайте .env.production вручную"
+        echo "Не найден .env или env.example, создайте .env.production вручную"
     fi
 fi
 
