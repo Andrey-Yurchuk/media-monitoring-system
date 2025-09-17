@@ -1,0 +1,73 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: # Позволяет запускать вручную
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup environment
+        run: |
+          echo "Setting up production environment..."
+          
+      - name: Stop old containers
+        run: |
+          echo "Stopping old containers..."
+          cd /home/$USER/production-media-monitoring
+          docker-compose down || true
+          
+      - name: Copy new code to production
+        run: |
+          echo "Copying new code to production directory..."
+          sudo mkdir -p /home/$USER/production-media-monitoring
+          sudo cp -r $GITHUB_WORKSPACE/* /home/$USER/production-media-monitoring/
+          sudo chown -R $USER:$USER /home/$USER/production-media-monitoring
+          
+      - name: Setup production environment
+        run: |
+          echo "Setting up production environment file..."
+          cd /home/$USER/production-media-monitoring
+          cp .env.example .env.production || echo "No .env.example found"
+          
+      - name: Build and start containers
+        run: |
+          echo "Building and starting new containers..."
+          cd /home/$USER/production-media-monitoring
+          docker-compose -f docker-compose.yml --env-file .env.production up -d --build
+          
+      - name: Wait for services to be ready
+        run: |
+          echo "Waiting for services to start..."
+          sleep 30
+          
+      - name: Health check
+        run: |
+          echo "Performing health check..."
+          # Проверяем, что приложение отвечает
+          for i in {1..10}; do
+            if curl -f http://localhost:8080/health || curl -f http://localhost:8080/; then
+              echo "Application is healthy!"
+              exit 0
+            fi
+            echo "Attempt $i failed, waiting 5 seconds..."
+            sleep 5
+          done
+          echo "Health check failed!"
+          exit 1
+          
+      - name: Cleanup old images
+        run: |
+          echo "Cleaning up old Docker images..."
+          docker image prune -f
+          
+      - name: Deployment successful
+        run: |
+          echo "✅ Deployment completed successfully!"
+          echo "Application is running at: http://localhost:8080"
