@@ -17,12 +17,6 @@ jobs:
         run: |
           echo "Setting up production environment..."
           
-      - name: Stop old containers
-        run: |
-          echo "Stopping old containers..."
-          cd /var/www/html/production-media-monitoring
-          docker-compose -f docker-compose.prod.yml down || true
-          
       - name: Copy new code to production
         run: |
           echo "Copying new code to production directory..."
@@ -35,31 +29,11 @@ jobs:
           cd /var/www/html/production-media-monitoring
           cp .env .env.production 2>/dev/null || cp .env.example .env.production 2>/dev/null || echo "No .env or .env.example found"
           
-      - name: Build and start containers
+      - name: Blue-Green Deployment
         run: |
-          echo "Building and starting new containers..."
+          echo "Starting Blue-Green deployment..."
           cd /var/www/html/production-media-monitoring
-          docker-compose -f docker-compose.prod.yml --env-file .env.production up -d --build
-          
-      - name: Wait for services to be ready
-        run: |
-          echo "Waiting for services to start..."
-          sleep 30
-          
-      - name: Health check
-        run: |
-          echo "Performing health check..."
-          # Проверяем, что приложение отвечает
-          for i in {1..10}; do
-            if curl -f http://localhost:8080/health || curl -f http://localhost:8080/; then
-              echo "Application is healthy!"
-              exit 0
-            fi
-            echo "Attempt $i failed, waiting 5 seconds..."
-            sleep 5
-          done
-          echo "Health check failed!"
-          exit 1
+          ./scripts/blue-green-deploy.sh
           
       - name: Cleanup old images
         run: |
@@ -68,5 +42,5 @@ jobs:
           
       - name: Deployment successful
         run: |
-          echo "✅ Deployment completed successfully!"
-          echo "Application is running at: http://localhost:8080"
+          echo "✅ Blue-Green deployment completed successfully!"
+          echo "Application is running at: http://localhost"

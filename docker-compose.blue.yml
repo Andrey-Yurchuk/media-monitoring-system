@@ -2,7 +2,7 @@ services:
 
   nginx:
     image: nginx:stable-alpine
-    container_name: nginx-mms-prod
+    container_name: nginx-mms-blue
     ports:
       - "8080:80"
     volumes:
@@ -16,7 +16,7 @@ services:
     build:
       context: ./docker/php
       dockerfile: Dockerfile
-    container_name: php-fpm-mms-prod
+    container_name: php-fpm-mms-blue
     volumes:
       - .:/var/www/html
     depends_on:
@@ -27,7 +27,7 @@ services:
 
   db:
     image: postgres:latest
-    container_name: postgres-mms-prod
+    container_name: postgres-mms-blue
     env_file:
       - .env.production
     environment:
@@ -35,9 +35,9 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
     ports:
-      - "${DB_EXTERNAL_PORT}:${DB_PORT}"
+      - "5433:5432"
     volumes:
-      - postgres_data_prod:/var/lib/postgresql/data
+      - postgres_data_blue:/var/lib/postgresql/data
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     restart: unless-stopped
 
@@ -46,4 +46,4 @@ networks:
     driver: bridge
 
 volumes:
-  postgres_data_prod:
+  postgres_data_blue:
